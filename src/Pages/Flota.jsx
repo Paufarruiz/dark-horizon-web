@@ -121,7 +121,7 @@ const styles = {
   grid: { 
     display: "grid", 
     // CAMBIO CLAVE: Usa minmax para que en móviles sea 1 columna y en PC se ajusten solas
-    gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", 
+    
     gap: "20px", 
     width: "100%", 
     boxSizing: "border-box" 
