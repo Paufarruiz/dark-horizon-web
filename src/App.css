@@ -1288,3 +1288,90 @@ ul { list-style: none; }
     grid-template-columns: repeat(4, 1fr); /* PC: 4 columnas */
   }
 }
+
+
+/* --- SISTEMA DE FLOTA AUTOMÁTICO --- */
+
+.contenedor-grid-auto {
+  display: grid;
+  /* 'auto-fit' crea tantas columnas como quepan de mínimo 300px */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  width: 100%;
+  padding: 20px 0;
+}
+
+.ship-card-dhl {
+  background: rgba(10, 15, 25, 0.95);
+  border: 1px solid rgba(255, 215, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.ship-card-dhl:hover {
+  transform: translateY(-5px);
+  border-color: var(--gold);
+}
+
+.ship-image-container {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #000;
+}
+
+.ship-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ship-card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.ship-name-text { color: var(--white); font-family: var(--font-display); font-size: 1.2rem; margin: 0; }
+.ship-owner-text { color: var(--gold); font-family: var(--font-mono); font-size: 0.75rem; margin: 5px 0 15px 0; }
+.ship-desc-text { 
+  color: rgba(255,255,255,0.7); 
+  font-size: 0.85rem; 
+  line-height: 1.5; 
+  border-left: 2px solid var(--gold); 
+  padding-left: 12px;
+  margin-bottom: 20px;
+}
+
+.ship-card-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.ship-wiki-link {
+  color: var(--gold);
+  text-decoration: none;
+  font-size: 0.7rem;
+  font-weight: bold;
+  border: 1px solid var(--gold);
+  padding: 4px 10px;
+  transition: all 0.2s;
+}
+
+.ship-wiki-link:hover {
+  background: var(--gold);
+  color: var(--black);
+}
+
+/* Estilos de cabecera para que no dependan de JS */
+.flota-section { width: 100%; }
+.flota-header { margin-bottom: 3rem; }
+.flota-title { font-family: var(--font-display); color: var(--white); font-size: clamp(2rem, 5vw, 3.5rem); }
+.flota-tag { color: var(--cyan); font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 2px; }
+.flota-line { width: 100px; height: 2px; background: var(--gold); margin-top: 10px; }
