@@ -25,29 +25,25 @@ export default function Hero({ navigate }) {
         const inviteCode = "BPd4aNDwuF";
         const url = `https://discord.com/api/v9/invites/${inviteCode}?with_counts=true`;
         
-        // Usamos un proxy alternativo (Cors-anywhere o similar) si AllOrigins falla
-        // Pero mantendremos AllOrigins añadiendo un timestamp para evitar caché
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`;
+        // Intentamos un proxy diferente (reducimos carga en AllOrigins)
+        // Usamos este proxy que suele ser más estable para GitHub Pages
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
 
         const response = await fetch(proxyUrl);
-        if (!response.ok) throw new Error("Error de red");
-
         const json = await response.json();
         
         if (json.contents) {
           const data = JSON.parse(json.contents);
-          if (data.approximate_member_count !== undefined) {
+          if (data.approximate_member_count) {
             setMemberCount(data.approximate_member_count);
           } else {
-            setMemberCount("N/A"); // No se encontró el dato en el JSON
+            setMemberCount("?"); // La API respondió pero no traía el número
           }
-        } else {
-          setMemberCount("Error"); // El proxy respondió vacío
         }
-        
       } catch (err) {
-        console.error("Error cargando Discord Stats:", err);
-        setMemberCount("Offline"); // Cambio de 0 a "Offline" para saber que falló la conexión
+        console.error("Error:", err);
+        // Aquí está el truco: si falla, veremos "Error" en la web
+        setMemberCount("ERR"); 
       }
     };
 
