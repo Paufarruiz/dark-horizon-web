@@ -1,0 +1,18 @@
+/* index.css corregido */
+:root {
+  /* Mantén tus variables si las usas, pero borra el resto */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #050508; /* El color de tu clan */
+}
+
+#root {
+  width: 100% !important;  /* Forzamos el ancho completo */
+  max-width: 100% !important;
+  margin: 0;
+  padding: 0;
+  text-align: left; /* Para que no herede el center del index antiguo */
+}
