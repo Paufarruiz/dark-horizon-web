@@ -22,26 +22,28 @@ export default function Hero({ navigate }) {
     // 2. Conexión con Discord para el TOTAL de miembros
     const fetchDiscordStats = async () => {
       try {
-        // Tu ID real del servidor
-        const serverID = "1002849633598447647"; 
+        const inviteCode = "BPd4aNDwuF";
+        const url = `https://discord.com/api/v9/invites/${inviteCode}?with_counts=true`;
         
-        // Llamada directa a la API del Widget de Discord
-        const response = await fetch(`https://discord.com/api/guilds/${serverID}/widget.json`);
-        
-        if (!response.ok) throw new Error("Widget no habilitado");
+        // Intentamos un proxy diferente (reducimos carga en AllOrigins)
+        // Usamos este proxy que suele ser más estable para GitHub Pages
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
 
-        const data = await response.json();
+        const response = await fetch(proxyUrl);
+        const json = await response.json();
         
-        // presence_count muestra los usuarios ONLINE en este momento
-        if (data.presence_count !== undefined) {
-          setMemberCount(data.presence_count);
-        } else {
-          setMemberCount("?"); 
+        if (json.contents) {
+          const data = JSON.parse(json.contents);
+          if (data.approximate_member_count) {
+            setMemberCount(data.approximate_member_count);
+          } else {
+            setMemberCount("?"); // La API respondió pero no traía el número
+          }
         }
       } catch (err) {
         console.error("Error:", err);
-        // Si sale "Off", recuerda activar el Widget en los ajustes de tu Discord
-        setMemberCount("Off"); 
+        // Aquí está el truco: si falla, veremos "Error" en la web
+        setMemberCount("ERR"); 
       }
     };
 

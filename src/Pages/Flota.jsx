@@ -11,7 +11,6 @@ export default function Flota() {
       try {
         const shipNames = MI_FLOTA_CLAN.map(ship => ship.name);
         
-        // Consultamos la API pidiendo: Imagen (pageimages) y Extractos de texto (extracts)
         const apiUrl = `https://starcitizen.tools/api.php?action=query&prop=pageimages|extracts&exintro&explaintext&pithumbsize=1000&titles=${encodeURIComponent(shipNames.join('|'))}&format=json&origin=*`;
         
         const response = await fetch(apiUrl);
@@ -23,7 +22,6 @@ export default function Flota() {
         Object.values(pages).forEach(page => {
           dataMap[page.title.toLowerCase()] = {
             img: page.thumbnail?.source,
-            // Intentamos sacar una descripción corta del extracto
             desc: page.extract ? page.extract.split('.')[0] + '.' : "Ficha técnica disponible en la Wiki."
           };
         });
@@ -81,7 +79,6 @@ export default function Flota() {
                   <h3 style={styles.shipName}>{ship.name}</h3>
                   <div style={styles.shipOwner}>PILOTO: {ship.owner}</div>
                   
-                  {/* Nueva sección de datos scrapeados */}
                   <p style={styles.shipDesc}>{ship.desc}</p>
                   
                   <div style={styles.footer}>
@@ -106,16 +103,37 @@ export default function Flota() {
 }
 
 const styles = {
-  page: { width: "100%", minHeight: "100vh", backgroundColor: "transparent", padding: "4rem 1rem", boxSizing: "border-box", overflowX: "hidden" },
+  page: { 
+    width: "100%", 
+    minHeight: "100vh", 
+    backgroundColor: "transparent", 
+    padding: "2rem 1rem", // Ajustado para mejor visibilidad en móviles
+    boxSizing: "border-box", 
+    overflowX: "hidden" 
+  },
   section: { width: "100%", margin: "0 auto" },
-  header: { marginBottom: "3rem", paddingLeft: "1rem" },
+  header: { marginBottom: "2rem", paddingLeft: "1rem" },
   tag: { color: "var(--cyan)", fontFamily: "var(--font-mono)", fontSize: "0.8rem", letterSpacing: "2px", textTransform: "uppercase" },
   title: { color: "var(--white)", fontSize: "clamp(2rem, 5vw, 3.5rem)", margin: "0.5rem 0", fontFamily: "var(--font-display)", textTransform: "uppercase" },
   gold: { color: "var(--gold)" },
   line: { width: "100px", height: "2px", background: "var(--gold)" },
   loading: { color: "var(--gold)", fontFamily: "var(--font-mono)", textAlign: "center", padding: "4rem", width: "100%" },
-  grid: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "15px", width: "100%", boxSizing: "border-box" },
-  card: { background: "rgba(10, 15, 25, 0.95)", border: "1px solid rgba(255, 215, 0, 0.15)", display: "flex", flexDirection: "column", overflow: "hidden", borderRadius: "2px" },
+  grid: { 
+    display: "grid", 
+    // CAMBIO CLAVE: Usa minmax para que en móviles sea 1 columna y en PC se ajusten solas
+    gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", 
+    gap: "20px", 
+    width: "100%", 
+    boxSizing: "border-box" 
+  },
+  card: { 
+    background: "rgba(10, 15, 25, 0.95)", 
+    border: "1px solid rgba(255, 215, 0, 0.15)", 
+    display: "flex", 
+    flexDirection: "column", 
+    overflow: "hidden", 
+    borderRadius: "2px" 
+  },
   imageContainer: { width: "100%", aspectRatio: "16/9", background: "#000", overflow: "hidden" },
   img: { width: "100%", height: "100%", objectFit: "cover", display: "block" },
   cardBody: { padding: "1.2rem", display: "flex", flexDirection: "column", flexGrow: 1 },
