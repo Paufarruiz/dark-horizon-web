@@ -11,8 +11,8 @@ export default function Contacto() {
   const [loading, setLoading] = useState(false);
   const fadeRefs = useRef([]);
 
-  // Tu Webhook de Discord
-  const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1503083888669495386/bv8id9Dj5HPtDkr6C_QdbUXsRFPphWpxpFRdordPdf_enjRUPttnJBC2rtTx1SXu_n_L";
+  // URL del Webhook extraída de forma segura desde las variables de entorno de Vite
+  const DISCORD_WEBHOOK_URL = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -30,6 +30,12 @@ export default function Contacto() {
   const handleSubmit = async () => {
     if (!form.handle || !form.discord) return;
     
+    // Verificación de seguridad por si la variable no carga
+    if (!DISCORD_WEBHOOK_URL) {
+        alert("Error de configuración: No se encontró la dirección de transmisión.");
+        return;
+    }
+
     setLoading(true);
 
     const discordMessage = {
