@@ -23,31 +23,31 @@ export default function Hero({ navigate }) {
     const fetchDiscordStats = async () => {
       try {
         const inviteCode = "BPd4aNDwuF";
-        
-        // Usamos un proxy diferente o el mismo pero con manejo de errores más limpio
         const url = `https://discord.com/api/v9/invites/${inviteCode}?with_counts=true`;
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+        
+        // Usamos un proxy alternativo (Cors-anywhere o similar) si AllOrigins falla
+        // Pero mantendremos AllOrigins añadiendo un timestamp para evitar caché
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`;
 
         const response = await fetch(proxyUrl);
-        if (!response.ok) throw new Error("Fallo en el proxy");
+        if (!response.ok) throw new Error("Error de red");
 
         const json = await response.json();
         
-        // AllOrigins devuelve un string en .contents, hay que parsearlo
         if (json.contents) {
           const data = JSON.parse(json.contents);
-          if (data.approximate_member_count) {
+          if (data.approximate_member_count !== undefined) {
             setMemberCount(data.approximate_member_count);
-            return; // Éxito, salimos de la función
+          } else {
+            setMemberCount("N/A"); // No se encontró el dato en el JSON
           }
+        } else {
+          setMemberCount("Error"); // El proxy respondió vacío
         }
-        
-        // Si llegamos aquí, algo falló en la estructura del JSON
-        setMemberCount(0); // <--- PON AQUÍ TU NÚMERO ACTUAL A MANO COMO RESPALDO
         
       } catch (err) {
         console.error("Error cargando Discord Stats:", err);
-        setMemberCount(0); // <--- VALOR DE RESPALDO SI LA API MUERE
+        setMemberCount("Offline"); // Cambio de 0 a "Offline" para saber que falló la conexión
       }
     };
 
