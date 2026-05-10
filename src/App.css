@@ -1268,3 +1268,25 @@ ul { list-style: none; }
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
+/* Forzamos el comportamiento de la flota */
+.flota__grid {
+  display: grid !important;
+  gap: 20px !important;
+  /* Móvil primero: 1 columna */
+  grid-template-columns: 1fr !important;
+}
+
+@media (min-width: 992px) {
+  .flota__grid {
+    /* En PC: 4 columnas */
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .flota__grid {
+    /* En Tablets: 2 columnas */
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}

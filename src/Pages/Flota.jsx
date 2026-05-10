@@ -10,12 +10,10 @@ export default function Flota() {
       setLoading(true);
       try {
         const shipNames = MI_FLOTA_CLAN.map(ship => ship.name);
-        
         const apiUrl = `https://starcitizen.tools/api.php?action=query&prop=pageimages|extracts&exintro&explaintext&pithumbsize=1000&titles=${encodeURIComponent(shipNames.join('|'))}&format=json&origin=*`;
         
         const response = await fetch(apiUrl);
         const data = await response.json();
-        
         const pages = data.query?.pages || {};
         const dataMap = {};
         
@@ -47,7 +45,6 @@ export default function Flota() {
         setLoading(false);
       }
     };
-
     fetchFullShipData();
   }, []);
 
@@ -63,7 +60,8 @@ export default function Flota() {
         {loading ? (
           <div style={styles.loading}>ACCEDIENDO AL MANIFIESTO DE CARGA...</div>
         ) : (
-          <div style={styles.grid}>
+          /* AÑADIMOS LA CLASE 'flota__grid' AQUÍ */
+          <div style={styles.grid} className="flota__grid">
             {ships.map((ship) => (
               <div key={ship.id} style={styles.card}>
                 <div style={styles.imageContainer}>
@@ -78,7 +76,6 @@ export default function Flota() {
                 <div style={styles.cardBody}>
                   <h3 style={styles.shipName}>{ship.name}</h3>
                   <div style={styles.shipOwner}>PILOTO: {ship.owner}</div>
-                  
                   <p style={styles.shipDesc}>{ship.desc}</p>
                   
                   <div style={styles.footer}>
@@ -103,14 +100,7 @@ export default function Flota() {
 }
 
 const styles = {
-  page: { 
-    width: "100%", 
-    minHeight: "100vh", 
-    backgroundColor: "transparent", 
-    padding: "2rem 1rem", // Ajustado para mejor visibilidad en móviles
-    boxSizing: "border-box", 
-    overflowX: "hidden" 
-  },
+  page: { width: "100%", minHeight: "100vh", padding: "2rem 1rem", boxSizing: "border-box" },
   section: { width: "100%", margin: "0 auto" },
   header: { marginBottom: "2rem", paddingLeft: "1rem" },
   tag: { color: "var(--cyan)", fontFamily: "var(--font-mono)", fontSize: "0.8rem", letterSpacing: "2px", textTransform: "uppercase" },
@@ -120,26 +110,18 @@ const styles = {
   loading: { color: "var(--gold)", fontFamily: "var(--font-mono)", textAlign: "center", padding: "4rem", width: "100%" },
   grid: { 
     display: "grid", 
-    // CAMBIO CLAVE: Usa minmax para que en móviles sea 1 columna y en PC se ajusten solas
-    
+    /* HEMOS QUITADO EL gridTemplateColumns DE AQUÍ */
     gap: "20px", 
     width: "100%", 
     boxSizing: "border-box" 
   },
-  card: { 
-    background: "rgba(10, 15, 25, 0.95)", 
-    border: "1px solid rgba(255, 215, 0, 0.15)", 
-    display: "flex", 
-    flexDirection: "column", 
-    overflow: "hidden", 
-    borderRadius: "2px" 
-  },
+  card: { background: "rgba(10, 15, 25, 0.95)", border: "1px solid rgba(255, 215, 0, 0.15)", display: "flex", flexDirection: "column", overflow: "hidden" },
   imageContainer: { width: "100%", aspectRatio: "16/9", background: "#000", overflow: "hidden" },
   img: { width: "100%", height: "100%", objectFit: "cover", display: "block" },
   cardBody: { padding: "1.2rem", display: "flex", flexDirection: "column", flexGrow: 1 },
-  shipName: { color: "var(--white)", fontSize: "1.2rem", margin: "0", fontFamily: "var(--font-display)", textTransform: "uppercase" },
-  shipOwner: { color: "var(--gold)", fontFamily: "var(--font-mono)", fontSize: "0.75rem", margin: "5px 0 15px 0", letterSpacing: "1px" },
-  shipDesc: { color: "rgba(255,255,255,0.7)", fontSize: "0.8rem", lineHeight: "1.4", margin: "0 0 20px 0", minHeight: "3.2em", borderLeft: "2px solid var(--gold)", paddingLeft: "10px" },
+  shipName: { color: "var(--white)", fontSize: "1.2rem", margin: "0", fontFamily: "var(--font-display)" },
+  shipOwner: { color: "var(--gold)", fontFamily: "var(--font-mono)", fontSize: "0.75rem", margin: "5px 0 15px 0" },
+  shipDesc: { color: "rgba(255,255,255,0.7)", fontSize: "0.8rem", lineHeight: "1.4", margin: "0 0 20px 0", borderLeft: "2px solid var(--gold)", paddingLeft: "10px" },
   footer: { marginTop: "auto", display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "10px", borderTop: "1px solid rgba(255,255,255,0.1)" },
   status: { color: "var(--cyan)", fontSize: "0.6rem", fontFamily: "var(--font-mono)" },
   wikiLink: { color: "var(--gold)", textDecoration: "none", fontSize: "0.7rem", fontWeight: "bold", border: "1px solid var(--gold)", padding: "2px 8px" }
