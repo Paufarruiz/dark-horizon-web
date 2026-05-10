@@ -43,30 +43,9 @@ export default function Flota() {
     fetchFullShipData();
   }, []);
 
+  // En el return de Flota.jsx
   return (
     <div style={styles.page}>
-      {/* ESTO ES LO QUE ARREGLA EL MÓVIL SÍ O SÍ */}
-      <style>{`
-        .contenedor-grid-dhl {
-          display: grid !important;
-          gap: 20px !important;
-          width: 100% !important;
-          grid-template-columns: 1fr !important; /* MÓVIL POR DEFECTO */
-        }
-
-        @media (min-width: 768px) {
-          .contenedor-grid-dhl {
-            grid-template-columns: repeat(2, 1fr) !important; /* TABLET */
-          }
-        }
-
-        @media (min-width: 1100px) {
-          .contenedor-grid-dhl {
-            grid-template-columns: repeat(4, 1fr) !important; /* PC */
-          }
-        }
-      `}</style>
-
       <section style={styles.section}>
         <header style={styles.header}>
           <span style={styles.tag}>Sincronización RSI Online</span>
@@ -77,33 +56,11 @@ export default function Flota() {
         {loading ? (
           <div style={styles.loading}>ACCEDIENDO AL MANIFIESTO DE CARGA...</div>
         ) : (
+          /* Usamos la clase que definimos en el paso 1 */
           <div className="contenedor-grid-dhl">
             {ships.map((ship) => (
               <div key={ship.id} style={styles.card}>
-                <div style={styles.imageContainer}>
-                  <img 
-                    src={ship.img} 
-                    alt={ship.name}
-                    style={styles.img}
-                    onError={(e) => { e.target.src = "https://starcitizen.tools/images/0/03/Aurora_MR_in_space.jpg"; }}
-                  />
-                </div>
-                <div style={styles.cardBody}>
-                  <h3 style={styles.shipName}>{ship.name}</h3>
-                  <div style={styles.shipOwner}>PILOTO: {ship.owner}</div>
-                  <p style={styles.shipDesc}>{ship.desc}</p>
-                  <div style={styles.footer}>
-                    <div style={styles.status}>SISTEMAS ONLINE</div>
-                    <a 
-                      href={`https://starcitizen.tools/${ship.name.replace(/ /g, '_')}`} 
-                      target="_blank" 
-                      rel="noreferrer"
-                      style={styles.wikiLink}
-                    >
-                      INFO +
-                    </a>
-                  </div>
-                </div>
+                {/* ... resto del contenido de la tarjeta ... */}
               </div>
             ))}
           </div>
