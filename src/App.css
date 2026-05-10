@@ -259,6 +259,9 @@ ul { list-style: none; }
   margin: 0 auto;
   width: 100%;
   padding: 0 3rem;
+  padding-top: 100px; /* Esto empuja el contenido hacia abajo para que no lo tape el Navbar */
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 .section-tag {
@@ -1240,6 +1243,9 @@ ul { list-style: none; }
   margin: 0 auto;    /* Esto centra ese bloque de texto */
   width: 100%;
   padding: 0 3rem;
+  padding-top: 100px; /* Esto empuja el contenido hacia abajo para que no lo tape el Navbar */
+  padding-left: 1rem;
+  padding-right: 1rem;
   }
 
   .footer { padding: 2rem 1.5rem; }

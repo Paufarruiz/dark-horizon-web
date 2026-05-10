@@ -22,26 +22,32 @@ export default function Hero({ navigate }) {
     // 2. Conexión con Discord para el TOTAL de miembros
     const fetchDiscordStats = async () => {
       try {
-        // Tu ID real del servidor
-        const serverID = "1002849633598447647"; 
+        const inviteCode = "BPd4aNDwuF";
+        const url = `https://discord.com/api/v9/invites/${inviteCode}?with_counts=true`;
         
-        // Llamada directa a la API del Widget de Discord
-        const response = await fetch(`https://discord.com/api/guilds/${serverID}/widget.json`);
-        
-        if (!response.ok) throw new Error("Widget no habilitado");
+        // Usamos un proxy alternativo (Cors-anywhere o similar) si AllOrigins falla
+        // Pero mantendremos AllOrigins añadiendo un timestamp para evitar caché
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`;
 
-        const data = await response.json();
+        const response = await fetch(proxyUrl);
+        if (!response.ok) throw new Error("Error de red");
+
+        const json = await response.json();
         
-        // presence_count muestra los usuarios ONLINE en este momento
-        if (data.presence_count !== undefined) {
-          setMemberCount(data.presence_count);
+        if (json.contents) {
+          const data = JSON.parse(json.contents);
+          if (data.approximate_member_count !== undefined) {
+            setMemberCount(data.approximate_member_count);
+          } else {
+            setMemberCount("N/A"); // No se encontró el dato en el JSON
+          }
         } else {
-          setMemberCount("?"); 
+          setMemberCount("Error"); // El proxy respondió vacío
         }
+        
       } catch (err) {
-        console.error("Error:", err);
-        // Si sale "Off", recuerda activar el Widget en los ajustes de tu Discord
-        setMemberCount("Off"); 
+        console.error("Error cargando Discord Stats:", err);
+        setMemberCount("Offline"); // Cambio de 0 a "Offline" para saber que falló la conexión
       }
     };
 
