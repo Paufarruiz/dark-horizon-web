@@ -1251,3 +1251,20 @@ ul { list-style: none; }
   .btn { width: 100%; justify-content: center; }
   .flota__summary { gap: 1.5rem; }
 }
+
+
+/* Esto controla la rejilla de la flota de forma global */
+.flota-grid-clase {
+  display: grid;
+  gap: 20px;
+  /* Por defecto (móvil): 1 columna */
+  grid-template-columns: 1fr; 
+}
+
+/* Si la pantalla es más grande que 768px (PC/Tablet) */
+@media (min-width: 768px) {
+  .flota-grid-clase {
+    /* En PC: 4 columnas */
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
