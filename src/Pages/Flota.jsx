@@ -11,24 +11,20 @@ export default function Flota() {
       try {
         const shipNames = MI_FLOTA_CLAN.map(ship => ship.name);
         const apiUrl = `https://starcitizen.tools/api.php?action=query&prop=pageimages|extracts&exintro&explaintext&pithumbsize=1000&titles=${encodeURIComponent(shipNames.join('|'))}&format=json&origin=*`;
-        
         const response = await fetch(apiUrl);
         const data = await response.json();
         const pages = data.query?.pages || {};
         const dataMap = {};
-        
         Object.values(pages).forEach(page => {
           dataMap[page.title.toLowerCase()] = {
             img: page.thumbnail?.source,
             desc: page.extract ? page.extract.split('.')[0] + '.' : "Ficha técnica disponible en la Wiki."
           };
         });
-
         const joinedData = MI_FLOTA_CLAN.map((naveClan, index) => {
           const lowerName = naveClan.name.toLowerCase();
           const info = dataMap[lowerName] || 
                        dataMap[Object.keys(dataMap).find(k => k.includes(lowerName) || lowerName.includes(k))] || {};
-
           return {
             id: index,
             owner: naveClan.owner,
@@ -37,7 +33,6 @@ export default function Flota() {
             desc: info.desc || "Sincronizando con los servidores de la UEE..."
           };
         });
-
         setShips(joinedData);
       } catch (error) {
         console.error("Error cargando datos:", error);
@@ -50,6 +45,28 @@ export default function Flota() {
 
   return (
     <div style={styles.page}>
+      {/* ESTO ES LO QUE ARREGLA EL MÓVIL SÍ O SÍ */}
+      <style>{`
+        .contenedor-grid-dhl {
+          display: grid !important;
+          gap: 20px !important;
+          width: 100% !important;
+          grid-template-columns: 1fr !important; /* MÓVIL POR DEFECTO */
+        }
+
+        @media (min-width: 768px) {
+          .contenedor-grid-dhl {
+            grid-template-columns: repeat(2, 1fr) !important; /* TABLET */
+          }
+        }
+
+        @media (min-width: 1100px) {
+          .contenedor-grid-dhl {
+            grid-template-columns: repeat(4, 1fr) !important; /* PC */
+          }
+        }
+      `}</style>
+
       <section style={styles.section}>
         <header style={styles.header}>
           <span style={styles.tag}>Sincronización RSI Online</span>
@@ -60,8 +77,7 @@ export default function Flota() {
         {loading ? (
           <div style={styles.loading}>ACCEDIENDO AL MANIFIESTO DE CARGA...</div>
         ) : (
-          /* AÑADIMOS LA CLASE 'flota__grid' AQUÍ */
-          <div style={styles.grid} className="flota__grid">
+          <div className="contenedor-grid-dhl">
             {ships.map((ship) => (
               <div key={ship.id} style={styles.card}>
                 <div style={styles.imageContainer}>
@@ -72,12 +88,10 @@ export default function Flota() {
                     onError={(e) => { e.target.src = "https://starcitizen.tools/images/0/03/Aurora_MR_in_space.jpg"; }}
                   />
                 </div>
-                
                 <div style={styles.cardBody}>
                   <h3 style={styles.shipName}>{ship.name}</h3>
                   <div style={styles.shipOwner}>PILOTO: {ship.owner}</div>
                   <p style={styles.shipDesc}>{ship.desc}</p>
-                  
                   <div style={styles.footer}>
                     <div style={styles.status}>SISTEMAS ONLINE</div>
                     <a 
@@ -108,13 +122,6 @@ const styles = {
   gold: { color: "var(--gold)" },
   line: { width: "100px", height: "2px", background: "var(--gold)" },
   loading: { color: "var(--gold)", fontFamily: "var(--font-mono)", textAlign: "center", padding: "4rem", width: "100%" },
-  grid: { 
-    display: "grid", 
-    /* HEMOS QUITADO EL gridTemplateColumns DE AQUÍ */
-    gap: "20px", 
-    width: "100%", 
-    boxSizing: "border-box" 
-  },
   card: { background: "rgba(10, 15, 25, 0.95)", border: "1px solid rgba(255, 215, 0, 0.15)", display: "flex", flexDirection: "column", overflow: "hidden" },
   imageContainer: { width: "100%", aspectRatio: "16/9", background: "#000", overflow: "hidden" },
   img: { width: "100%", height: "100%", objectFit: "cover", display: "block" },
