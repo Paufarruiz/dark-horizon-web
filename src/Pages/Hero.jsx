@@ -22,28 +22,32 @@ export default function Hero({ navigate }) {
     // 2. Conexión con Discord para el TOTAL de miembros
     const fetchDiscordStats = async () => {
       try {
-        // Tu código de invitación real es BPd4aNDwuF
         const inviteCode = "BPd4aNDwuF";
         
-        // Usamos AllOrigins como proxy para evitar errores de CORS (bloqueo del navegador)
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(
-          `https://discord.com/api/v9/invites/${inviteCode}?with_counts=true`
-        )}`;
+        // Usamos un proxy diferente o el mismo pero con manejo de errores más limpio
+        const url = `https://discord.com/api/v9/invites/${inviteCode}?with_counts=true`;
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
 
         const response = await fetch(proxyUrl);
-        const json = await response.json();
-        const data = JSON.parse(json.contents);
+        if (!response.ok) throw new Error("Fallo en el proxy");
 
-        // approximate_member_count incluye a todos los miembros (Online + Offline)
-        if (data.approximate_member_count) {
-          setMemberCount(data.approximate_member_count);
-        } else {
-          // Valor por defecto basado en tu última captura si falla la API
-          setMemberCount(0); 
+        const json = await response.json();
+        
+        // AllOrigins devuelve un string en .contents, hay que parsearlo
+        if (json.contents) {
+          const data = JSON.parse(json.contents);
+          if (data.approximate_member_count) {
+            setMemberCount(data.approximate_member_count);
+            return; // Éxito, salimos de la función
+          }
         }
+        
+        // Si llegamos aquí, algo falló en la estructura del JSON
+        setMemberCount(0); // <--- PON AQUÍ TU NÚMERO ACTUAL A MANO COMO RESPALDO
+        
       } catch (err) {
         console.error("Error cargando Discord Stats:", err);
-        setMemberCount(0); 
+        setMemberCount(0); // <--- VALOR DE RESPALDO SI LA API MUERE
       }
     };
 
