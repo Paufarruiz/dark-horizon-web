@@ -5,4 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   base: '/dark-horizon-web/', // <--- AÑADE ESTA LÍNEA (el nombre de tu repo)
+  server: {
+    historyApiFallback: true,  // ← añade esto
+  }
 })

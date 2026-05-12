@@ -1,0 +1,7 @@
+Servidor backend:
+cd backend
+npm start
+
+
+Web en local:
+npm run dev

@@ -1381,3 +1381,86 @@ ul { list-style: none; }
 .flota-title { font-family: var(--font-display); color: var(--white); font-size: clamp(2rem, 5vw, 3.5rem); }
 .flota-tag { color: var(--cyan); font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 2px; }
 .flota-line { width: 100px; height: 2px; background: var(--gold); margin-top: 10px; }
+
+/* ============================================================
+   AÑADE ESTO AL FINAL DE TU App.css
+   ============================================================ */
+
+/* ── Navbar auth slot ── */
+.navbar__auth {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .navbar__auth {
+    display: none; /* En móvil se muestra dentro del menú hamburguesa */
+  }
+}
+
+/* ── Panel de miembro (ejemplo de contenido con rango) ── */
+.member-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 2rem;
+  position: relative;
+}
+
+.member-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 40px; height: 2px;
+  background: var(--gold);
+}
+
+.member-panel__header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.member-panel__rank {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid;
+}
+
+.member-panel__username {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--white);
+}
+
+/* ── Lock overlay para contenido restringido ── */
+.locked-content {
+  position: relative;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  border: 1px dashed var(--border);
+  padding: 3rem;
+  text-align: center;
+}
+
+.locked-content__icon {
+  font-size: 2rem;
+  opacity: 0.4;
+}
+
+.locked-content__text {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  text-transform: uppercase;
+}

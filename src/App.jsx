@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 
+// Auth
+import { AuthProvider } from "./Context/AuthContext";
+
 // Pages
 import Hero     from "./Pages/Hero";
 import Flota    from "./Pages/Flota";
@@ -14,7 +17,6 @@ import StarField from "./Components/StarField";
 export default function App() {
   const [page, setPage] = useState("hero");
 
-  // Scroll to top on page change
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [page]);
@@ -31,21 +33,16 @@ export default function App() {
   };
 
   return (
-    <>
+    // 🔑 AuthProvider envuelve TODO para que cualquier componente acceda al login
+    <AuthProvider>
       <StarField />
       <Navbar current={page} navigate={navigate} />
-      
-      {/* Cambiamos <main> por un contenedor que use tus clases de centrado.
-        '.page' asegura que el fondo sea oscuro/ancho y 
-        '.page-inner' centra el contenido a 1200px.
-      */}
       <main className="page">
         <div className="page-inner">
           {renderPage()}
         </div>
       </main>
-
       <Footer navigate={navigate} />
-    </>
+    </AuthProvider>
   );
 }

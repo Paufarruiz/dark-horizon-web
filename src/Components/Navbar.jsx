@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import DiscordLogin from "./DiscordLogin";
 
 const LINKS = [
   { id: "hero",     label: "Inicio"   },
@@ -7,8 +8,8 @@ const LINKS = [
 ];
 
 export default function Navbar({ current, navigate }) {
-  const [scrolled,    setScrolled]    = useState(false);
-  const [mobileOpen,  setMobileOpen]  = useState(false);
+  const [scrolled,   setScrolled]   = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -49,7 +50,12 @@ export default function Navbar({ current, navigate }) {
           ))}
         </ul>
 
-        {/* Burger */}
+        {/* 🔑 Login Discord — solo en desktop */}
+        <div className="navbar__auth">
+          <DiscordLogin />
+        </div>
+
+        {/* Burger mobile */}
         <div className="navbar__burger" onClick={() => setMobileOpen(o => !o)}>
           <span style={{ transform: mobileOpen ? "rotate(45deg) translate(5px,5px)" : "none" }} />
           <span style={{ opacity: mobileOpen ? 0 : 1 }} />
@@ -69,6 +75,10 @@ export default function Navbar({ current, navigate }) {
             </span>
           </li>
         ))}
+        {/* Login también en menú móvil */}
+        <li style={{ paddingTop: "0.5rem", borderTop: "1px solid var(--border)" }}>
+          <DiscordLogin />
+        </li>
       </ul>
     </>
   );
