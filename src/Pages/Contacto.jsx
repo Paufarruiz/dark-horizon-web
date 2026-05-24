@@ -1,17 +1,29 @@
 import { useEffect, useRef, useState } from "react";
 
 const CHANNELS = [
-  { icon:"💬", name:"Discord", desc:"El hub principal del clan. Coordinación, eventos, voz y texto.", link:"discord.gg/GFz999YmRz", href:"https://discord.gg/GFz999YmRz" },
-  { icon:"🌐", name:"RSI Organization", desc:"Nuestra página oficial en Roberts Space Industries.", link:"robertsspaceindustries.com", href:"https://robertsspaceindustries.com" },
+  { icon:"💬", name:"Discord", desc:"El hub principal del clan. Coordinación, eventos, voz y texto.", link:"discord.gg/GFz999YmRz", href:"https://discord.gg/4mHvEatEEd" },
+  { icon:"🌐", name:"RSI Organization", desc:"Nuestra página oficial en Roberts Space Industries.", link:"robertsspaceindustries.com", href:"https://robertsspaceindustries.com/en/orgs/DHLO/#manifesto" },
 ];
 
 export default function Contacto() {
-  const [form, setForm] = useState({ handle: "", discord: "", role: "", about: "" });
+  // Estado inicial extendido con los nuevos campos
+  const [form, setForm] = useState({ 
+    profileType: "nuevo_integrante", // Por defecto
+    handle: "", 
+    discord: "", 
+    role: "", 
+    about: "",
+    // Campos para Emisario Externo
+    org: "",
+    motivo: "",
+    rango: "",
+    disponibilidad: ""
+  });
+  
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const fadeRefs = useRef([]);
 
-  // URL del Webhook extraída de forma segura desde las variables de entorno de Vite
   const DISCORD_WEBHOOK_URL = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
 
   useEffect(() => {
@@ -27,10 +39,18 @@ export default function Contacto() {
   
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
+  // Validación dinámica según el tipo de perfil seleccionado
+  const isFormValid = () => {
+    if (!form.handle || !form.discord) return false;
+    if (form.profileType === "emisario_externo") {
+      return form.org && form.motivo && form.rango;
+    }
+    return true; // Para nuevo integrante los campos adicionales son opcionales
+  };
+
   const handleSubmit = async () => {
-    if (!form.handle || !form.discord) return;
+    if (!isFormValid()) return;
     
-    // Verificación de seguridad por si la variable no carga
     if (!DISCORD_WEBHOOK_URL) {
         alert("Error de configuración: No se encontró la dirección de transmisión.");
         return;
@@ -38,26 +58,40 @@ export default function Contacto() {
 
     setLoading(true);
 
-    const discordMessage = {
-      embeds: [{
-        title: "📑 NUEVA SOLICITUD DE ALISTAMIENTO",
-        color: 15844367, // Color Oro DHL
-        fields: [
-          { name: "👨‍🚀 Handle RSI", value: `\`${form.handle}\``, inline: true },
-          { name: "💬 Discord", value: `\`${form.discord}\``, inline: true },
-          { name: "🏹 Rol de Interés", value: form.role || "No especificado", inline: true },
-          { name: "📝 Manifiesto", value: form.about || "Sin descripción adicional." }
-        ],
-        footer: { text: "Sistema de Reclutamiento Dark Horizon" },
-        timestamp: new Date()
-      }]
+    // Estructura base del Embed de Discord
+    let embed = {
+      timestamp: new Date(),
+      footer: { text: "Sistema de Reclutamiento Dark Horizon" }
     };
+
+    // Configuración condicional según el perfil
+    if (form.profileType === "nuevo_integrante") {
+      embed.title = "📑 NUEVA SOLICITUD DE ALISTAMIENTO";
+      embed.color = 15844367; // Color Oro DHL
+      embed.fields = [
+        { name: "👨‍🚀 Handle RSI", value: `\`${form.handle}\``, inline: true },
+        { name: "💬 Discord", value: `\`${form.discord}\``, inline: true },
+        { name: "🏹 Rol de Interés", value: form.role || "No especificado", inline: true },
+        { name: "📝 Manifiesto", value: form.about || "Sin descripción adicional." }
+      ];
+    } else {
+      embed.title = "EMISARIO EXTERNO / SOCIO COMERCIAL";
+      embed.color = 3447003; // Color Azul/Diplomático corporativo
+      embed.fields = [
+        { name: "👨‍🚀 Handle RSI", value: `\`${form.handle}\``, inline: true },
+        { name: "💬 Discord", value: `\`${form.discord}\``, inline: true },
+        { name: "🛡️ Organización de procedencia", value: form.org, inline: false },
+        { name: "🔮 Motivo del enlace", value: form.motivo, inline: false },
+        { name: "🎖️ Rango/Cargo", value: form.rango, inline: true },
+        { name: "🚀 Disponibilidad y Rol (Naves/Día a día)", value: form.disponibilidad || "No especificado", inline: false }
+      ];
+    }
 
     try {
       const response = await fetch(DISCORD_WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(discordMessage)
+        body: JSON.stringify({ embeds: [embed] })
       });
 
       if (response.ok) {
@@ -84,7 +118,7 @@ export default function Contacto() {
             </h1>
             <div className="gold-line" style={{ margin: "1.5rem auto" }} />
             <p className="section-subtitle" style={{ textAlign: "center", margin: "0 auto" }}>
-              Buscamos pilotos comprometidos, con ganas de aprender y construir algo grande.
+              Busca tu destino entre las estrellas o formaliza un enlace comercial con nuestra flota.
             </p>
           </div>
 
@@ -125,11 +159,21 @@ export default function Contacto() {
                 <div className="form-success" style={{ border: "1px solid var(--gold)", padding: "2rem", textAlign: "center", color: "var(--gold)" }}>
                   ◆ SOLICITUD TRANSMITIDA ◆<br /><br />
                   <span style={{ color: "var(--white)", fontSize: "0.9rem" }}>
-                    Tus datos han llegado al canal de solicitudes. Un oficial revisará tu candidatura pronto.
+                    Tus datos han llegado al canal de solicitudes. Un oficial revisará la transmisión pronto.
                   </span>
                 </div>
               ) : (
                 <>
+                  {/* SELECTOR DE TIPO DE PERFIL */}
+                  <div className="form-group">
+                    <label className="form-label">Tipo de Perfil *</label>
+                    <select className="form-select" name="profileType" value={form.profileType} onChange={handleChange}>
+                      <option value="nuevo_integrante">Nuevo Integrante / Alistamiento</option>
+                      <option value="emisario_externo">Emisario Externo / Socio Comercial</option>
+                    </select>
+                  </div>
+
+                  {/* CAMPOS COMUNES */}
                   <div className="form-group">
                     <label className="form-label">Handle en Star Citizen *</label>
                     <input className="form-input" name="handle" value={form.handle} onChange={handleChange} placeholder="TuNombreEnJuego" />
@@ -138,33 +182,77 @@ export default function Contacto() {
                     <label className="form-label">Usuario de Discord *</label>
                     <input className="form-input" name="discord" value={form.discord} onChange={handleChange} placeholder="ejemplo#0000" />
                   </div>
-                  <div className="form-group">
-                    <label className="form-label">Rol preferido</label>
-                    <select className="form-select" name="role" value={form.role} onChange={handleChange}>
-                      <option value="">-- Selecciona un rol --</option>
-                      <option value="Piloto de Combate">Piloto de Combate</option>
-                      <option value="Explorador">Explorador</option>
-                      <option value="Capitán de Cargo">Capitán de Cargo</option>
-                      <option value="Minero">Minero</option>
-                      <option value="Médico / Soporte">Médico / Soporte</option>
-                      <option value="Sin preferencia">Sin preferencia</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Cuéntanos sobre ti</label>
-                    <textarea className="form-textarea" name="about" value={form.about} onChange={handleChange}
-                      placeholder="¿Qué buscas en un clan? ¿Qué naves tienes?" />
-                  </div>
+
+                  {/* CAMPOS EXCLUSIVOS: NUEVO INTEGRANTE */}
+                  {form.profileType === "nuevo_integrante" && (
+                    <>
+                      <div className="form-group">
+                        <label className="form-label">Rol preferido</label>
+                        <select className="form-select" name="role" value={form.role} onChange={handleChange}>
+                          <option value="">-- Selecciona un rol --</option>
+                          <option value="Piloto de Combate">Vanguardia e Interdicción</option>
+                          <option value="Explorador">Coerción Táctica</option>
+                          <option value="Capitán de Cargo">Inteligencia</option>
+                          <option value="Capitán de Cargo">Logística</option>
+                          <option value="Capitán de Cargo">Extracción</option>
+                          <option value="Minero">Médico / Soporte</option>
+                          <option value="Médico / Soporte">Ingeniero</option>
+                          <option value="Sin preferencia">Sin preferencia</option>
+                        </select>
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">Cuéntanos sobre ti</label>
+                        <textarea className="form-textarea" name="about" value={form.about} onChange={handleChange}
+                          placeholder="¿Qué buscas en un clan? ¿Qué naves tienes?" />
+                      </div>
+                    </>
+                  )}
+
+                  {/* CAMPOS EXCLUSIVOS: EMISARIO EXTERNO (SEGÚN LA IMAGEN) */}
+                  {form.profileType === "emisario_externo" && (
+                    <>
+                      <div className="form-group">
+                        <label className="form-label">Organización de procedencia *</label>
+                        <input className="form-input" name="org" value={form.org} onChange={handleChange} placeholder="Nombre y siglas de tu facción" />
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">Motivo del enlace *</label>
+                        <select className="form-select" name="motivo" value={form.motivo} onChange={handleChange}>
+                          <option value="">-- Selecciona un motivo --</option>
+                          <option value="Pactos territoriales">Pactos territoriales</option>
+                          <option value="Escolta armada">Escolta armada</option>
+                          <option value="Compra de material procesado">Compra de material procesado</option>
+                          <option value="Intercambio de inteligencia">Intercambio de inteligencia</option>
+                        </select>
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">Rango / Cargo *</label>
+                        <input className="form-input" name="rango" value={form.rango} onChange={handleChange} placeholder="Tu posición oficial dentro de tu estructura de mando" />
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">Disponibilidad y Rol</label>
+                        <textarea className="form-textarea" name="disponibilidad" value={form.disponibilidad} onChange={handleChange}
+                          placeholder="Qué naves pesadas o industriales aportas a la flotilla y qué te gusta hacer en el día a día." />
+                      </div>
+                      
+                      {/* Advertencia del sistema extraída visualmente del texto de la imagen */}
+                      <div style={{ backgroundColor: "rgba(255,0,0,0.05)", borderLeft: "3px solid #ff4444", padding: "0.8rem", margin: "1rem 0", fontSize: "0.75rem", color: "#ffb3b3" }}>
+                        <strong>[ADVERTENCIA DEL SISTEMA]</strong><br />
+                        Mantengan la disciplina en la frecuencia. Todo mensaje que no cumpla con los formatos de registro o que comprometa el anonimato y la seguridad de la corporación será purgado de forma inmediata por el sistema de contrainformación.
+                      </div>
+                    </>
+                  )}
+
                   <button 
                     className="btn btn-primary form-submit" 
                     onClick={handleSubmit}
-                    disabled={loading || !form.handle || !form.discord}
-                    style={{ opacity: (loading || !form.handle || !form.discord) ? 0.5 : 1, width: "100%" }}
+                    disabled={loading || !isFormValid()}
+                    style={{ opacity: (loading || !isFormValid()) ? 0.5 : 1, width: "100%" }}
                   >
                     {loading ? "TRANSMITIENDO..." : "Enviar solicitud →"}
                   </button>
                   <p style={{ fontSize: "0.72rem", color: "var(--muted)", marginTop: "0.5rem" }}>
-                    * Campos obligatorios. La información se enviará directamente a nuestra base de mando.
+                    * Campos obligatorios. La información se enviará cifrada directamente a nuestra base de mando.
                   </p>
                 </>
               )}

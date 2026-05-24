@@ -10,7 +10,8 @@ const PORT = process.env.PORT || 3001;
 app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:5173" }));
 app.use(express.json());
 
-// PASO 1 — Redirigir al usuario a Discord OAuth2
+// ── Auth Discord ─────────────────────────────────────────────
+
 app.get("/auth/discord", (req, res) => {
   const params = new URLSearchParams({
     client_id:     process.env.DISCORD_CLIENT_ID,
@@ -21,13 +22,11 @@ app.get("/auth/discord", (req, res) => {
   res.redirect(`https://discord.com/api/oauth2/authorize?${params}`);
 });
 
-// PASO 2 — Recibir el código y obtener datos del usuario
 app.post("/auth/discord/callback", async (req, res) => {
   const { code } = req.body;
   if (!code) return res.status(400).json({ error: "No code provided" });
 
   try {
-    // Intercambiar código por access token
     const tokenRes = await fetch("https://discord.com/api/oauth2/token", {
       method:  "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -44,13 +43,11 @@ app.post("/auth/discord/callback", async (req, res) => {
 
     const { access_token } = tokenData;
 
-    // Datos básicos del usuario
     const userRes  = await fetch("https://discord.com/api/users/@me", {
       headers: { Authorization: `Bearer ${access_token}` },
     });
     const userData = await userRes.json();
 
-    // Roles del usuario en el servidor de Dark Horizon (ID: 1002849633598447647)
     const memberRes  = await fetch(
       `https://discord.com/api/users/@me/guilds/${process.env.DISCORD_GUILD_ID}/member`,
       { headers: { Authorization: `Bearer ${access_token}` } }
@@ -61,18 +58,41 @@ app.post("/auth/discord/callback", async (req, res) => {
       id:       userData.id,
       username: userData.global_name || userData.username,
       avatar:   userData.avatar,
-      roles:    memberData.roles || [],       // Array de IDs de roles en el servidor
+      roles:    memberData.roles || [],
       nickname: memberData.nick || userData.global_name || userData.username,
     };
 
     res.json({ user });
-
   } catch (err) {
     console.error("Error OAuth:", err);
     res.status(500).json({ error: "Authentication failed" });
   }
 });
 
+// ── Proxy UEX Corp API (evita CORS del navegador) ────────────
+// El frontend llama a /api/uex/commodities_routes?...
+// El backend lo reenvía a UEX y devuelve la respuesta
+app.get("/api/uex/:resource", async (req, res) => {
+  const { resource } = req.params;
+  const query        = new URLSearchParams(req.query).toString();
+  const uexUrl       = `https://api.uexcorp.space/2.0/${resource}${query ? "?" + query : ""}`;
+
+  try {
+    const uexRes  = await fetch(uexUrl, {
+      headers: {
+        "Accept": "application/json",
+        "User-Agent": "DarkHorizonLogistics/1.0",
+      },
+    });
+    const data = await uexRes.json();
+    res.json(data);
+  } catch (err) {
+    console.error("Error proxy UEX:", err);
+    res.status(500).json({ status: "error", message: "No se pudo conectar con UEX Corp" });
+  }
+});
+
+// ── Health ───────────────────────────────────────────────────
 app.get("/health", (_req, res) =>
   res.json({ status: "online", clan: "Dark Horizon Logistics" })
 );

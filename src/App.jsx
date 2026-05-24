@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 
-// Auth
 import { AuthProvider } from "./Context/AuthContext";
 
-// Pages
-import Hero     from "./Pages/Hero";
-import Flota    from "./Pages/Flota";
-import Contacto from "./Pages/Contacto";
+import Hero             from "./Pages/Hero";
+import Flota            from "./Pages/Flota";
+import Contacto         from "./Pages/Contacto";
+import RutasComerciales from "./Pages/RutasComerciales";
+import ComparadorNaves  from "./Pages/ComparadorNaves";
 
-// Components
 import Navbar    from "./Components/Navbar";
 import Footer    from "./Components/Footer";
 import StarField from "./Components/StarField";
@@ -25,15 +24,16 @@ export default function App() {
 
   const renderPage = () => {
     switch (page) {
-      case "hero":     return <Hero     navigate={navigate} />;
-      case "flota":    return <Flota    navigate={navigate} />;
-      case "contacto": return <Contacto navigate={navigate} />;
-      default:         return <Hero     navigate={navigate} />;
+      case "hero":    return <Hero     navigate={navigate} />;
+      case "flota":   return <Flota    navigate={navigate} />;
+      case "contacto":return <Contacto navigate={navigate} />;
+      case "rutas":      return <RutasComerciales />;
+      case "comparador": return <ComparadorNaves />;
+      default:           return <Hero     navigate={navigate} />;
     }
   };
 
   return (
-    // 🔑 AuthProvider envuelve TODO para que cualquier componente acceda al login
     <AuthProvider>
       <StarField />
       <Navbar current={page} navigate={navigate} />

@@ -84,8 +84,8 @@ export default function Hero({ navigate }) {
             </h1>
 
             <p className="hero__subtitle">
-              Clan de élite en el universo de Star Citizen. Operaciones de combate,
-              exploración y comercio en los rincones más peligrosos del espacio conocido.
+              Eficiencia en la luz, discreción absoluta en la sombra. Sindicato de frontera especializado en operaciones tácticas encubiertas, 
+              pillaje e industrialización autónoma. Aseguramos la ruta y procesamos el botín sin dejar rastro. Sin preguntas.
             </p>
 
             <div className="hero__cta">
@@ -148,8 +148,13 @@ export default function Hero({ navigate }) {
             </h2>
             <div className="gold-line" />
             <p className="section-subtitle">
-              Dark Horizon Logistics nació como un grupo de amigos con una visión: construir una organización
-              hispanohablante de referencia en Star Citizen. Tácticos, leales y siempre listos para la operación.
+              Dark Horizon Logistics [DHLo], consolidada administrativamente en el año 2956 tras nacer en 2947 
+              con cinco operadores independientes en la estación Olisar, destaca por su discreción y eficiencia 
+              en rutas hostiles de los sistemas desregulados. Aprendiendo que el volumen visible arruina la rentabilidad, 
+              el grupo se especializó en operaciones rápidas y procesamiento directo de materiales. Con la apertura de nuevos sectores comerciales, 
+              integraron una flota pesada y autónoma que incluye naves de transporte, patrulla y laboratorios científicos. Su estructura descentralizada y 
+              blindada digitalmente protege el anonimato de sus fundadores mientras operan de manera autosuficiente ante cualquier amenaza. Actualmente, 
+              se presentan en el Spectrum como una agencia de transporte eficiente, consolidándose en la frontera como los verdaderos dueños del horizonte.
             </p>
           </div>
 
@@ -157,8 +162,8 @@ export default function Hero({ navigate }) {
             {[
               { label: "Comercio / Cargo",   pct: "74%" },
               { label: "Exploración",        pct: "52%" },
-              { label: "Combate PvP",        pct: "40%" },
-              { label: "Minería",            pct: "28%" },
+              { label: "Minería",        pct: "40%" },
+              { label: "Combate PvP",            pct: "28%" },
             ].map(item => (
               <div key={item.label}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.4rem" }}>
@@ -184,10 +189,10 @@ export default function Hero({ navigate }) {
         </div>
         <div className="fade-in" ref={addRef} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1.2rem" }}>
           {[
-            { icon: "⚔", title: "Lealtad",      desc: "Los hermanos de clan siempre primero. Nunca se abandona a un piloto." },
-            { icon: "🧭", title: "Táctica",      desc: "Cada operación se planifica. La improvisación es el lujo del que puede permitírselo." },
-            { icon: "🔒", title: "Disciplina",   desc: "Reglas claras, respeto mutuo y comunicación efectiva en todo momento." },
-            { icon: "🚀", title: "Ambición",     desc: "Siempre más lejos, siempre mejor. No hay sistema que no valga la pena explorar." },
+            { icon: "⚔", title: "PROTOCOLO DE CONFIDENCIALIDAD Y ANONIMATO",      desc: "Se exige secreto absoluto sobre la flota pesada, la identidad de los líderes y los contratos especiales. Las comunicaciones sensibles se realizan estrictamente por canales encriptados secundarios, dejando el Spectrum solo para lo rutinario." },
+            { icon: "🧭", title: "DOCTRINA DE SEGURIDAD INDUSTRIAL",      desc: "Las operaciones se protegen mediante el control cuántico del sector para agilizar la extracción e industrialización in-situ. La escolta táctica tiene orden de responder inmediatamente con fuego pesado ante cualquier amenaza." },
+            { icon: "🗺️​", title: "DISCIPLINA DE FLOTA Y AUTOSUFICIENCIA",   desc: "Es obligatorio acatar las directrices de las divisiones de Inteligencia, Coerción y Vanguardia para asegurar la coordinación de la flota. Ante bajas o accidentes, la prioridad absoluta es la evacuación médica del personal y la recuperación de materiales." },
+            { icon: "🔒​", title: "SISTEMA ECONÓMICO CORPORATIVO",     desc: "Las ganancias de contratos especiales y materias primas procesadas se distribuyen de forma equitativa, transparente y proporcional entre los miembros que hayan participado activamente en la misión." },
           ].map(v => (
             <div key={v.title} className="card" style={{ padding: "1.8rem" }}>
               <div style={{ fontSize: "1.8rem", marginBottom: "1rem" }}>{v.icon}</div>
